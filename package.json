@@ -1,0 +1,25 @@
+{
+  "name": "automationexercise",
+  "version": "1.0.0",
+  "description": "Playwright tasks",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:mobile:iphone": "playwright test --project='Mobile Safari'",
+    "test:mobile:pixel": "playwright test --project='Pixel 5'",
+    "pw:install": "playwright install",
+    "pw:report": "playwright show-report"
+  },
+  "keywords": [],
+  "author": "Ivan Ignjatovic",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "dotenv": "^16.6.1"
+  }
+}
