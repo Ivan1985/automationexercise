@@ -6,8 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BASE_URL: https://automationexercise.com
-      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
       STORAGE_STATE_PATH: auth/state.json
+      # TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

@@ -39,6 +39,9 @@ export class AuthPage {
         // --- Success page after registration ---
         this.accountCreatedMsg = page.getByText(/account created!/i);
         this.continueLink = page.getByRole('link', { name: /continue/i });
+
+        // --- Exact error message for failed login ---
+        this.loginError = page.getByText('Your email or password is incorrect!');
     }
 
     // ---------- Public actions used by tests & setup ----------
@@ -98,5 +101,9 @@ export class AuthPage {
         await expect(this.accountCreatedMsg).toBeVisible();
         await this.continueLink.click();
         await expect(this.loggedInAs).toBeVisible();
+    }
+
+    async expectLoginError() {
+        await expect(this.loginError).toBeVisible();
     }
 }
