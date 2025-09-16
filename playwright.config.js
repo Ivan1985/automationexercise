@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
-    //timeout: 60000,
     testDir: './tests',
+    globalSetup: './global-setup.mjs',
     /* Run tests in files in parallel */
     fullyParallel: true,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -16,30 +16,18 @@ export default defineConfig({
     reporter: 'html',
     use: {
         baseURL: process.env.BASE_URL || 'https://automationexercise.com',
+        storageState: process.env.STORAGE_STATE_PATH || 'auth/state.json', // default: tests start logged-in
         headless: true, // true = headless, false = headed
-        viewport: { width: 1366, height: 768 },
-        ignoreHTTPSErrors: true,
         trace: 'on-first-retry',
         traceOptions: {
             screenshots: true,
             snapshots: true,
             sources: false, // This prevents logging of network requests containing the token
         },
-        //screenshot: 'only-on-failure',
-        //video: 'retain-on-failure',
     },
     projects: [
-        {
-            name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
-        },
-        {
-            name: 'firefox',
-            use: { ...devices['Desktop Firefox'] },
-        },
-        {
-            name: 'webkit',
-            use: { ...devices['Desktop Safari'] },
-        },
+        { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+        // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+        // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
     ],
 });

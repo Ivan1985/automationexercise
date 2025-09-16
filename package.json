@@ -13,7 +13,8 @@
     "test:mobile:iphone": "playwright test --project='Mobile Safari'",
     "test:mobile:pixel": "playwright test --project='Pixel 5'",
     "pw:install": "playwright install",
-    "pw:report": "playwright show-report"
+    "pw:report": "playwright show-report",
+    "auth:refresh": "node --env-file=.env -e \"import('./global-setup.mjs').then(m=>m.default())\""
   },
   "keywords": [],
   "author": "Ivan Ignjatovic",

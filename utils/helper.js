@@ -1,16 +1,16 @@
-// helper.js
+// Generate a unique email using timestamp (and a tiny random suffix to avoid collisions)
 export function uniqueEmail(prefix = 'ivan.qa') {
-    return `${prefix}+${Date.now()}@example.com`;
+    const unique = `${Date.now()}${Math.random().toString(36).slice(-3)}`;
+    return `${prefix}+${unique}@example.com`;
 }
+
+// Generate a readable unique display name (keeps a stable prefix)
 export function uniqueName(prefix = 'Ivan QA') {
-    return `${prefix} ${Date.now().toString().slice(-5)}`;
+    const unique = Date.now().toString().slice(-6);
+    return `${prefix} ${unique}`;
 }
-// Generate a random password at runtime — never logged
-export function generatePassword(length = 12) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
-    return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-}
-// Return masked string for logs (if absolutely needed)
+
+// Mask password in logs to avoid leaking secrets
 export function maskPassword() {
     return '********';
 }

@@ -1,54 +1,35 @@
-// Ensure env vars are loaded locally (no-op in CI if already provided)
 import 'dotenv/config';
-
+import fs from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/home.page.js';
 import { AuthPage } from '../pages/auth.page.js';
-import { uniqueEmail, uniqueName, maskPassword } from '../utils/helper.js';
 
-test.describe('Validate User Registration Process', () => {
-    test('@E2E 1. New user can successfully register and log in', async ({ page }) => {
+// Start logged-out for this file
+test.use({ storageState: null });
+
+const user = JSON.parse(fs.readFileSync('auth/user.json', 'utf-8'));
+const mask = () => '********';
+
+test.describe('Task 3: Login & Logout', () => {
+    test('User can log in with the generated account and then log out', async ({ page }) => {
         const home = new HomePage(page);
         const auth = new AuthPage(page);
 
-        // Read from env (no fallback)
-        const NAME_PREFIX = process.env.NAME_PREFIX || 'Ivan QA';
-        const EMAIL_PREFIX = process.env.EMAIL_PREFIX || 'ivan.qa';
-        const PASSWORD = process.env.TEST_PASSWORD;
+        const EMAIL = user.email;                 // from global-setup
+        const PASSWORD = process.env.TEST_PASSWORD; // from env/CI
 
-        // Hard guard: skip if TEST_PASSWORD is not provided
-        test.skip(!PASSWORD, 'Set TEST_PASSWORD in your .env (or GitHub Secrets) to run this test.');
+        if (!EMAIL || !PASSWORD) throw new Error('Missing user email (auth/user.json) or TEST_PASSWORD (.env/CI).');
 
-        // Generate unique data to avoid email collisions
-        const name = uniqueName(NAME_PREFIX);
-        const email = uniqueEmail(EMAIL_PREFIX);
+        console.log('=== Task 3: Login & Logout ===');
+        console.log(`Using → email: ${EMAIL}, password: ${mask()}`);
 
-        const profile = {
-            firstName: 'First',
-            lastName: 'Last',
-            company: 'Test Company',
-            address1: 'Nikole Tesle 333',
-            country: 'United States',
-            state: 'South Caroline',
-            city: 'Myrtle Beach',
-            zipcode: '10001',
-            mobile: '123321123321',
-        };
-
-        // Safe logs (password fully hidden)
-        console.log('=== Task 1: Registration ===');
-        console.log(`Using data → name: ${name}, email: ${email}, password: ${maskPassword()}`);
-
-        // Flow
         await home.goto();
         await home.openAuth();
-        await auth.signupBasic({ name, email });
-        await auth.fillRegistrationForm({ password: PASSWORD, profile });
-        await auth.expectAccountCreatedAndLoggedIn();
+        await auth.login(EMAIL, PASSWORD);
+        await auth.expectLoggedIn();  // optionally assert name
+        await auth.logout();
+        await expect(home.signupLoginLink).toBeVisible();
 
-        // Verify "Logged in as <name>"
-        await expect(auth.loggedInAs).toContainText(new RegExp(name.split(' ')[0], 'i'));
-
-        console.log('=== Registration finished successfully ===');
+        console.log('=== Login & Logout completed ===');
     });
 });

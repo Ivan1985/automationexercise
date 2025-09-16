@@ -8,5 +8,5 @@ node_modules/
 
 # Other
 *.env
-# Authentication data
-auth.json
+# Auth/session state
+auth/*.json

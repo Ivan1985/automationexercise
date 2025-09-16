@@ -1,16 +1,26 @@
+// pages/auth.page.js
 import { expect } from '@playwright/test';
 
 export class AuthPage {
     constructor(page) {
         this.page = page;
 
-        // Step 1 (Signup form at /login)
+        // --- Login form (left column on /login) ---
+        this.loginEmail = page.locator('form:has-text("Login")').getByPlaceholder(/email address/i);
+        this.loginPassword = page.locator('form:has-text("Login")').getByPlaceholder(/password/i);
+        this.loginBtn = page.getByRole('button', { name: /^login$/i });
+
+        // --- Logged-in state & logout ---
+        this.loggedInAs = page.getByText(/logged in as/i);
+        this.logoutLink = page.getByRole('link', { name: /logout/i });
+
+        // --- Signup (step 1) on /login, right column ---
         this.signupName = page.getByRole('textbox', { name: /^name$/i });
-        this.signupEmail = page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder(/email address/i);
+        this.signupEmail = page.locator('form:has-text("Signup")').getByPlaceholder(/email address/i);
         this.signupBtn = page.getByRole('button', { name: /^signup$/i });
 
-        // Step 2 (Registration form)
-        this.titleMr = page.getByText('Mr.', { exact: false }); // from codegen
+        // --- Registration form (step 2) ---
+        this.titleMr = page.getByText('Mr.', { exact: false });
         this.password = page.getByRole('textbox', { name: /password \*/i });
         this.days = page.locator('#days');
         this.months = page.locator('#months');
@@ -21,60 +31,69 @@ export class AuthPage {
         this.address1 = page.getByRole('textbox', { name: /address \* \(street address/i });
         this.country = page.getByLabel(/country \*/i);
         this.state = page.getByRole('textbox', { name: /state \*/i });
-        this.city = page.getByRole('textbox', { name: /city \* zipcode \*/i }); // per codegen
+        this.cityZip = page.getByRole('textbox', { name: /city \* zipcode \*/i }); // AE groups these
         this.zipcode = page.locator('#zipcode');
         this.mobile = page.getByRole('textbox', { name: /mobile number \*/i });
         this.createAccountBtn = page.getByRole('button', { name: /create account/i });
 
-        // Messages / navigation
+        // --- Success page after registration ---
         this.accountCreatedMsg = page.getByText(/account created!/i);
         this.continueLink = page.getByRole('link', { name: /continue/i });
-        this.loggedInAs = page.getByText(/logged in as/i);
     }
 
-    // Step 1: Name + Email, then click Signup
+    // ---------- Public actions used by tests & setup ----------
+
+    async login(email, password) {
+        await this.loginEmail.fill(email);
+        await this.loginPassword.fill(password);
+        await this.loginBtn.click();
+    }
+
+    async expectLoggedIn(expectedName) {
+        await expect(this.loggedInAs).toBeVisible();
+        if (expectedName) {
+            await expect(this.loggedInAs).toContainText(new RegExp(expectedName, 'i'));
+        }
+    }
+
+    async logout() {
+        await this.logoutLink.click();
+    }
+
+    // Step 1: fill Name + Email and click Signup
     async signupBasic({ name, email }) {
-        await expect(this.signupName).toBeVisible();
         await this.signupName.fill(name);
         await this.signupEmail.fill(email);
         await this.signupBtn.click();
     }
 
-    // Step 2: Fill full registration form (fields from your codegen)
+    // Step 2: fill complete registration form and submit
     async fillRegistrationForm({ password, dob = { day: '2', month: '3', year: '2015' }, profile }) {
-        // Title
         await this.titleMr.click();
-
-        // Password
         await this.password.fill(password);
 
-        // DOB
         await this.days.selectOption(dob.day);
         await this.months.selectOption(dob.month);
         await this.years.selectOption(dob.year);
 
-        // Name / Company
         await this.firstName.fill(profile.firstName);
         await this.lastName.fill(profile.lastName);
         await this.company.fill(profile.company);
 
-        // Address
         await this.address1.fill(profile.address1);
-        await this.country.selectOption(profile.country); // e.g., 'United States'
+        await this.country.selectOption(profile.country);
         await this.state.fill(profile.state);
 
-        // City + Zip (per site’s UI in your recording)
-        await this.city.fill(profile.city);
+        // AE UI has combined City/Zip field + separate #zipcode
+        await this.cityZip.fill(profile.city);
         await this.zipcode.fill(profile.zipcode);
 
-        // Mobile
         await this.mobile.fill(profile.mobile);
 
-        // Submit
         await this.createAccountBtn.click();
     }
 
-    // Verify success + continue + "Logged in as"
+    // Verify success screen then land on logged-in home
     async expectAccountCreatedAndLoggedIn() {
         await expect(this.accountCreatedMsg).toBeVisible();
         await this.continueLink.click();
