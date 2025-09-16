@@ -7,7 +7,7 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
-    "test:chromium": "playwright test --project=chromium",
+    "test:chromium": "playwright test --project=chromium --grep '@API'",
     "test:firefox": "playwright test --project=firefox",
     "test:webkit": "playwright test --project=webkit",
     "test:mobile:iphone": "playwright test --project='Mobile Safari'",
