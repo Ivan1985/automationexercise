@@ -25,7 +25,7 @@ export default async function globalSetup() {
     const auth = new AuthPage(page);
 
     console.log('=== Global setup: register a new user & save storageState ===');
-    console.log(`New user → name: ${name}, email: ${email}, password: ${maskPassword()}`);
+    console.log(`New user name: ${name}, email: ${email}, password: ${maskPassword()}`);
 
     await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
     await home.openAuth();
@@ -52,8 +52,8 @@ export default async function globalSetup() {
     // Save email and password for this CI run (git-ignored)
     await fs.writeFile(USER_PATH, JSON.stringify({ email, name, password }, null, 2));
 
-    console.log(`Saved storageState → ${STATE_PATH}`);
-    console.log(`Saved user meta     → ${USER_PATH}`);
+    console.log(`Saved storageState - ${STATE_PATH}`);
+    console.log(`Saved user meta - ${USER_PATH}`);
 
     await browser.close();
 }

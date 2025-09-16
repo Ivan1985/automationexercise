@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe('API Testing', () => {
     test('@API 1. Should return 200 and log product list', async ({ request }) => {
+        console.log('=== API Test: Get All Products List ===');
+
         const response = await request.get('https://automationexercise.com/api/productsList');
 
         // Assert status
@@ -14,8 +16,10 @@ test.describe('API Testing', () => {
         expect(Array.isArray(body.products)).toBe(true);
         expect(body.products.length).toBeGreaterThan(0);
 
+        // Summary log
+        console.log(`Total products returned: ${body.products.length}`);
+
         // Log all products in terminal
-        console.log('=== Product List ===');
         body.products.forEach((p, i) => {
             console.log(`${i + 1}. ${p.name} | Price: ${p.price} | Category: ${p.category?.category}`);
         });
@@ -24,6 +28,8 @@ test.describe('API Testing', () => {
         const firstProduct = body.products[0];
         expect(firstProduct).toHaveProperty('name');
         expect(firstProduct).toHaveProperty('price');
+
+        console.log('=== API Test completed successfully ===');
     });
 
     // Negativ test

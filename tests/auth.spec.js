@@ -3,11 +3,11 @@ import fs from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/home.page.js';
 import { AuthPage } from '../pages/auth.page.js';
+import { maskPassword } from '../utils/helper.js';
 
 test.use({ storageState: null });
 
 const user = JSON.parse(fs.readFileSync('auth/user.json', 'utf-8'));
-const mask = () => '********';
 
 test.describe('Login & Logout', () => {
     test('@E2E 1. User can log in with the generated account and then log out', async ({ page }) => {
@@ -19,7 +19,7 @@ test.describe('Login & Logout', () => {
 
         if (!EMAIL || !PASSWORD) throw new Error('Missing email/password for login.');
         console.log('=== Task 3: Login & Logout ===');
-        console.log(`Using → email: ${EMAIL}, password: ${mask()}`);
+        console.log(`Using email: ${EMAIL}, password: ${maskPassword()}`);
 
         await home.goto();
         await home.openAuth();
