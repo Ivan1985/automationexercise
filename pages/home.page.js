@@ -16,11 +16,8 @@ export class HomePage {
         await this.signupLoginLink.click();
     }
 
-    // <— NEW: used by the failing test
     async openProducts() {
         await this.productsLink.click();
-        await expect(this.page).toHaveURL(/\/products$/); // assert navigation
-        // Optional: assert search box is visible if you have it in ProductsPage
-        // await expect(this.page.getByPlaceholder(/search/i)).toBeVisible();
+        await expect(this.page).toHaveURL(/\/products$/);
     }
 }
