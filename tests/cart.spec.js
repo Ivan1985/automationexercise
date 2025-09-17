@@ -4,7 +4,7 @@ import { ProductsPage } from '../pages/products.page.js';
 import { CartPage } from '../pages/cart.page.js';
 
 test.describe('Task 2: Search and Add a Product to Cart', () => {
-    test('@E2E 2. Search "T-shirt", open PDP, add to cart, verify cart details', async ({ page }) => {
+    test('@E2E 2. Test the search functionality and cart behavior', async ({ page }) => {
         const home = new HomePage(page);
         const products = new ProductsPage(page);
         const cart = new CartPage(page);
